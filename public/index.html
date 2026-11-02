@@ -1,1 +1,654 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>JIYYAD TOOLS — SFL Bypass 2.0</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --glass-bg: rgba(255, 255, 255, 0.08);
+      --glass-border: rgba(255, 255, 255, 0.18);
+      --glass-highlight: rgba(255, 255, 255, 0.35);
+      --text: #f5f5f7;
+      --text-secondary: rgba(255, 255, 255, 0.65);
+      --text-tertiary: rgba(255, 255, 255, 0.4);
+      --accent: #0a84ff;
+      --accent-soft: rgba(10, 132, 255, 0.25);
+      --success: #30d158;
+      --error: #ff453a;
+      --radius: 22px;
+      --radius-sm: 14px;
+    }
 
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      height: 100%;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+      background: #000;
+      color: var(--text);
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Animated liquid background */
+    .bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      background: #050508;
+    }
+
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.55;
+      will-change: transform;
+      animation: float 18s ease-in-out infinite;
+    }
+
+    .blob-1 {
+      width: 420px;
+      height: 420px;
+      background: radial-gradient(circle, #5e5ce6 0%, transparent 70%);
+      top: -12%;
+      left: -10%;
+      animation-delay: 0s;
+    }
+
+    .blob-2 {
+      width: 380px;
+      height: 380px;
+      background: radial-gradient(circle, #0a84ff 0%, transparent 70%);
+      bottom: -15%;
+      right: -8%;
+      animation-delay: -6s;
+      animation-duration: 22s;
+    }
+
+    .blob-3 {
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, #bf5af2 0%, transparent 70%);
+      top: 40%;
+      left: 50%;
+      animation-delay: -12s;
+      animation-duration: 20s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(30px, -40px) scale(1.05); }
+      66% { transform: translate(-25px, 20px) scale(0.95); }
+    }
+
+    /* Noise overlay for depth */
+    .noise {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      opacity: 0.035;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    .container {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 420px;
+      animation: rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(28px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Liquid glass card */
+    .glass {
+      background: var(--glass-bg);
+      backdrop-filter: blur(40px) saturate(180%);
+      -webkit-backdrop-filter: blur(40px) saturate(180%);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 var(--glass-highlight);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .glass::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+      pointer-events: none;
+    }
+
+    .header {
+      padding: 28px 24px 18px;
+      text-align: center;
+    }
+
+    .logo-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .logo-mark {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(145deg, #fff 0%, #d1d1d6 100%);
+      color: #000;
+      display: grid;
+      place-items: center;
+      font-size: 17px;
+      font-weight: 700;
+      box-shadow: 0 4px 12px rgba(255,255,255,0.15);
+    }
+
+    .logo-text {
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+
+    .tagline {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .version-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 14px;
+      padding: 5px 12px;
+      border-radius: 100px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.12);
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--text-secondary);
+    }
+
+    .version-pill .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 8px var(--success);
+    }
+
+    .body {
+      padding: 8px 20px 24px;
+    }
+
+    /* Input */
+    .field {
+      margin-bottom: 14px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: var(--text-tertiary);
+      margin-bottom: 8px;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    input {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+    }
+
+    input::placeholder {
+      color: rgba(255,255,255,0.3);
+    }
+
+    input:focus {
+      border-color: rgba(10, 132, 255, 0.6);
+      background: rgba(0, 0, 0, 0.45);
+      box-shadow: 0 0 0 4px var(--accent-soft);
+    }
+
+    /* Button */
+    .btn {
+      width: 100%;
+      margin-top: 4px;
+      padding: 15px 20px;
+      border: none;
+      border-radius: var(--radius-sm);
+      background: linear-gradient(180deg, #3a3a3c 0%, #2c2c2e 100%);
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+      box-shadow:
+        0 4px 16px rgba(0,0,0,0.35),
+        inset 0 1px 0 rgba(255,255,255,0.12);
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,0.12) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow:
+        0 8px 24px rgba(0,0,0,0.4),
+        inset 0 1px 0 rgba(255,255,255,0.15);
+    }
+
+    .btn:active:not(:disabled) {
+      transform: translateY(0) scale(0.98);
+    }
+
+    .btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .btn .spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255,255,255,0.25);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.65s linear infinite;
+      display: none;
+    }
+
+    .btn.loading .spinner { display: block; }
+    .btn.loading .btn-text { display: none; }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Status toast */
+    .status {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-size: 0.82rem;
+      display: none;
+      animation: fadeSlide 0.35s ease both;
+      backdrop-filter: blur(12px);
+    }
+
+    .status.show { display: block; }
+
+    .status.info {
+      background: rgba(10, 132, 255, 0.15);
+      border: 1px solid rgba(10, 132, 255, 0.3);
+      color: #64b5ff;
+    }
+
+    .status.success {
+      background: rgba(48, 209, 88, 0.12);
+      border: 1px solid rgba(48, 209, 88, 0.3);
+      color: #30d158;
+    }
+
+    .status.error {
+      background: rgba(255, 69, 58, 0.12);
+      border: 1px solid rgba(255, 69, 58, 0.3);
+      color: #ff6961;
+    }
+
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Result card */
+    .result {
+      margin-top: 16px;
+      display: none;
+      animation: fadeSlide 0.4s ease both;
+    }
+
+    .result.show { display: block; }
+
+    .result-inner {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    .result-row {
+      margin-bottom: 14px;
+    }
+
+    .result-row:last-of-type {
+      margin-bottom: 0;
+    }
+
+    .result-label {
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-tertiary);
+      margin-bottom: 5px;
+    }
+
+    .result-value {
+      font-size: 0.82rem;
+      line-height: 1.45;
+      word-break: break-all;
+      color: var(--text);
+    }
+
+    .result-value a {
+      color: #64b5ff;
+      text-decoration: none;
+    }
+
+    .result-value a:hover {
+      text-decoration: underline;
+    }
+
+    .result-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .chip {
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 4px 10px;
+      border-radius: 100px;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .actions button {
+      padding: 12px;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: transform 0.15s ease, opacity 0.15s ease, background 0.2s ease;
+    }
+
+    .actions button:active {
+      transform: scale(0.97);
+    }
+
+    .actions .btn-open {
+      background: #fff;
+      color: #000;
+      box-shadow: 0 4px 14px rgba(255,255,255,0.15);
+    }
+
+    .actions .btn-open:hover {
+      opacity: 0.92;
+    }
+
+    .actions .btn-copy {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .actions .btn-copy:hover {
+      background: rgba(255,255,255,0.15);
+    }
+
+    .actions .btn-copy.copied {
+      background: rgba(48, 209, 88, 0.2);
+      border-color: rgba(48, 209, 88, 0.4);
+      color: var(--success);
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.3);
+      animation: rise 0.7s 0.15s both;
+    }
+
+    .footer strong {
+      color: rgba(255,255,255,0.5);
+      font-weight: 600;
+    }
+
+    /* Reduce motion for performance */
+    @media (prefers-reduced-motion: reduce) {
+      .blob { animation: none; }
+      .container, .status, .result { animation: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg" aria-hidden="true">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+  <div class="noise" aria-hidden="true"></div>
+
+  <div class="container">
+    <div class="glass">
+      <div class="header">
+        <div class="logo-row">
+          <div class="logo-mark">⚡</div>
+          <div class="logo-text">JIYYAD TOOLS</div>
+        </div>
+        <p class="tagline">SFL Shortlink Bypass</p>
+        <div class="version-pill">
+          <span class="dot"></span>
+          SFL BYPASS 2.0
+        </div>
+      </div>
+
+      <div class="body">
+        <form id="form" autocomplete="off">
+          <div class="field">
+            <label for="url">SFL Link</label>
+            <div class="input-wrap">
+              <input
+                type="url"
+                id="url"
+                placeholder="https://sfl.gl/..."
+                required
+              />
+            </div>
+          </div>
+          <button type="submit" class="btn" id="btn">
+            <span class="btn-text">Bypass Now</span>
+            <span class="spinner"></span>
+          </button>
+        </form>
+
+        <div class="status" id="status"></div>
+
+        <div class="result" id="result">
+          <div class="result-inner">
+            <div class="result-row">
+              <div class="result-label">Original</div>
+              <div class="result-value" id="original">—</div>
+            </div>
+            <div class="result-row">
+              <div class="result-label">Bypassed</div>
+              <div class="result-value" id="bypassed">—</div>
+            </div>
+            <div class="result-meta">
+              <span class="chip" id="platform">—</span>
+              <span class="chip" id="time">—</span>
+            </div>
+            <div class="actions">
+              <button type="button" class="btn-open" id="openBtn">Buka Link</button>
+              <button type="button" class="btn-copy" id="copyBtn">Copy</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="footer">
+      Powered by <strong>JIYYAD TOOLS</strong> · Liquid Glass
+    </p>
+  </div>
+
+  <script>
+    const form = document.getElementById('form');
+    const btn = document.getElementById('btn');
+    const statusEl = document.getElementById('status');
+    const resultEl = document.getElementById('result');
+    const originalEl = document.getElementById('original');
+    const bypassedEl = document.getElementById('bypassed');
+    const platformEl = document.getElementById('platform');
+    const timeEl = document.getElementById('time');
+    const openBtn = document.getElementById('openBtn');
+    const copyBtn = document.getElementById('copyBtn');
+
+    const PROXY = '/api/bypass';
+    let currentUrl = '';
+
+    function showStatus(type, text) {
+      statusEl.className = 'status show ' + type;
+      statusEl.textContent = text;
+    }
+
+    function escapeHtml(s) {
+      return String(s)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const url = document.getElementById('url').value.trim();
+      if (!url) return;
+
+      btn.disabled = true;
+      btn.classList.add('loading');
+      resultEl.classList.remove('show');
+      showStatus('info', 'Sedang bypass...');
+
+      try {
+        const res = await fetch(PROXY, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url })
+        });
+
+        const data = await res.json();
+
+        if (data.status === true && data.result) {
+          const r = data.result;
+          currentUrl = r.bypassed_url || '';
+
+          originalEl.textContent = r.original_url || url;
+          bypassedEl.innerHTML = currentUrl
+            ? `<a href="${escapeHtml(currentUrl)}" target="_blank" rel="noopener">${escapeHtml(currentUrl)}</a>`
+            : '—';
+          platformEl.textContent = r.platform ? '🌐 ' + r.platform : '—';
+          timeEl.textContent = data.time_taken ? '⏱ ' + data.time_taken : '—';
+
+          showStatus('success', 'Bypass berhasil');
+          resultEl.classList.add('show');
+        } else {
+          showStatus('error', data.message || 'Gagal bypass');
+        }
+      } catch (err) {
+        showStatus('error', 'Error: ' + err.message + ' — jalankan npm start');
+      } finally {
+        btn.disabled = false;
+        btn.classList.remove('loading');
+      }
+    });
+
+    openBtn.addEventListener('click', () => {
+      if (currentUrl) window.open(currentUrl, '_blank');
+    });
+
+    copyBtn.addEventListener('click', () => {
+      if (!currentUrl) return;
+      navigator.clipboard.writeText(currentUrl).then(() => {
+        copyBtn.textContent = 'Copied!';
+        copyBtn.classList.add('copied');
+        setTimeout(() => {
+          copyBtn.textContent = 'Copy';
+          copyBtn.classList.remove('copied');
+        }, 1400);
+      });
+    });
+  </script>
+</body>
+</html>
